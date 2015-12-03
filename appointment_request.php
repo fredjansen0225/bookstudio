@@ -14,10 +14,17 @@
             
             require_once '_db.php';
             
-            $stmt = $db->prepare('SELECT * FROM appointment WHERE appointment_id = :id');
-            $stmt->bindParam(':id', $_GET['id']);
-            $stmt->execute();
-            $event = $stmt->fetch();
+            if(defined('DB_SQLITE'))
+            {
+                $stmt = $db->prepare('SELECT * FROM appointment WHERE appointment_id = :id');
+                $stmt->bindParam(':id', $_GET['id']);
+                $stmt->execute();
+                $event = $stmt->fetch();
+            }else
+            {
+                $db->where('appointment_id', $_GET['id']);
+                $event = $db->get('appointment');
+            }
 
         ?>
         <form id="f" action="backend_request_save.php" style="padding:20px;">

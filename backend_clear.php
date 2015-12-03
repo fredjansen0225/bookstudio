@@ -7,14 +7,17 @@ $params = json_decode($json);
 $received_range_start = $params->start;
 $received_range_end = $params->end;
 
-$stmt = $db->prepare("DELETE FROM appointment WHERE appointment_status = 'free' AND NOT ((appointment_end <= :start) OR (appointment_start >= :end))");
-$stmt->bindParam(':start', $params->start);
-$stmt->bindParam(':end', $params->end);
-$stmt->execute();    
+if(defined('DB_SQLITE'))
+{
+	$stmt = $db->prepare("DELETE FROM appointment WHERE appointment_status = 'free' AND NOT ((appointment_end <= :start) OR (appointment_start >= :end))");
+	$stmt->bindParam(':start', $params->start);
+	$stmt->bindParam(':end', $params->end);
+	$stmt->execute();    
+}else{
+	$data =  Array($params->start, $params->end);
+	$dbMysql->rawQuery("DELETE FROM appointment WHERE appointment_status = 'free' AND NOT ((appointment_end <= ?) OR (appointment_start >= ?))",$data);
+}
 
-// $dbMysql->where('status','free');
-// $dbMysql->where('NOT ((appointment_end <= ?) OR (appointment_start >= ?))', Array($params->start, $params->end));
-// $dbMysql->delete('appointment');
 
 class Result {}
 

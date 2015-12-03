@@ -232,7 +232,6 @@
                             timeline.push({start: day.addHours(x), end: day.addHours(x + increaseAfternoon) });
                         }
                     }
-                    
                     return timeline;                    
                 }
                 

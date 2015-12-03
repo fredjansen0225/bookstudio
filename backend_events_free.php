@@ -6,12 +6,20 @@ $params = json_decode($json);
 
 $session_id = session_id();
     
-$stmt = $db->prepare("SELECT * FROM appointment WHERE (appointment_status = 'free' OR (appointment_status <> 'free' AND appointment_patient_session = :session)) AND NOT ((appointment_end <= :start) OR (appointment_start >= :end))");
-$stmt->bindParam(':start', $params->start);
-$stmt->bindParam(':end', $params->end);
-$stmt->bindParam(":session", $session_id);
-$stmt->execute();
-$result = $stmt->fetchAll();
+
+if(defined('DB_SQLITE'))
+{    
+	$stmt = $db->prepare("SELECT * FROM appointment WHERE (appointment_status = 'free' OR (appointment_status <> 'free' AND appointment_patient_session = :session)) AND NOT ((appointment_end <= :start) OR (appointment_start >= :end))");
+	$stmt->bindParam(':start', $params->start);
+	$stmt->bindParam(':end', $params->end);
+	$stmt->bindParam(":session", $session_id);
+	$stmt->execute();
+	$result = $stmt->fetchAll();
+}else{
+
+	$data = Array($session_id, $params->start, $params->end);
+	$result = $dbMysql->rawQuery("SELECT * FROM appointment WHERE (appointment_status = 'free' OR (appointment_status <> 'free' AND appointment_patient_session = ?)) AND NOT ((appointment_end <= ?) OR (appointment_start >= ?))", $data);
+}
 
 class Event {}
 class Tags {}

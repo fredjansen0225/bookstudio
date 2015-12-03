@@ -17,10 +17,19 @@
             
             require_once '_db.php';
             
-            $stmt = $db->prepare('SELECT * FROM [appointment] WHERE appointment_id = :id');
-            $stmt->bindParam(':id', $_GET['id']);
-            $stmt->execute();
-            $event = $stmt->fetch();
+            $event;
+
+            if(defined('DB_SQLITE'))
+            {
+                $stmt = $db->prepare('SELECT * FROM [appointment] WHERE appointment_id = :id');
+                $stmt->bindParam(':id', $_GET['id']);
+                $stmt->execute();
+                $event = $stmt->fetch();
+            }else
+            {
+                $dbMysql->where('appointment_id', $_GET['id']);
+                $event = $dbMysql->get('appointment');
+            }
 
         ?>
         
@@ -43,12 +52,26 @@
                 <div>
                     <select id="resource" name="resource" disabled ng-model="appointment.doctor">
                     <?php 
-                        foreach($db->query('SELECT * FROM [doctor] ORDER BY [doctor_name]') as $item) {
-                            $selected = "";
-                            if ($event["doctor_id"] == $item["doctor_id"]) {
-                                $selected = " selected";
+
+                        if(defined('DB_SQLITE'))
+                        {
+                            foreach($db->query('SELECT * FROM [doctor] ORDER BY [doctor_name]') as $item) {
+                                $selected = "";
+                                if ($event["doctor_id"] == $item["doctor_id"]) {
+                                    $selected = " selected";
+                                }
+                                echo "<option value='".$item["doctor_id"]."'".$selected.">".$item["doctor_name"]."</option>";
                             }
-                            echo "<option value='".$item["doctor_id"]."'".$selected.">".$item["doctor_name"]."</option>";
+                        }
+                        else{
+                            $dbMysql->orderBy('doctor_name','asc');
+                            foreach($dbMysql->get('doctor') as $item) {
+                                $selected = "";
+                                if ($event["doctor_id"] == $item["doctor_id"]) {
+                                    $selected = " selected";
+                                }
+                                echo "<option value='".$item["doctor_id"]."'".$selected.">".$item["doctor_name"]."</option>";
+                            }
                         }
                     ?>
                     </select>

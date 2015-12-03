@@ -1,7 +1,13 @@
 <?php
 require_once '_db.php';
-    
-$scheduler_doctors = $db->query('SELECT * FROM [doctor] ORDER BY [doctor_name]');
+
+if(defined('DB_SQLITE'))
+{    
+	$scheduler_doctors = $db->query('SELECT * FROM [doctor] ORDER BY [doctor_name]');
+}else{
+	$dbMysql->orderBy('doctor_name','asc');
+	$scheduler_doctors = $dbMysql->get('doctor');
+}
 
 class Resource {}
 

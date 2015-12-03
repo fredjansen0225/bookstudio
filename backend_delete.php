@@ -6,12 +6,18 @@ $params = json_decode($json);
 
 class Result {}
 
-$stmt = $db->prepare("DELETE FROM appointment WHERE appointment_id = :id");
-$stmt->bindParam(':id', $params->id);
-$stmt->execute();
+if(defined('DB_SQLITE'))
+{
+	$stmt = $db->prepare("DELETE FROM appointment WHERE appointment_id = :id");
+	$stmt->bindParam(':id', $params->id);
+	$stmt->execute();
+}else{
 
-// $dbMysql->where('id',$prepare->id);
-// $dbMysql->delete('appointment');
+	$dbMysql->where('appointment_id',$params->id);
+	$dbMysql->delete('appointment');
+
+}
+
 
 $response = new Result();
 $response->result = 'OK';

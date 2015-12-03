@@ -4,11 +4,20 @@ require_once '_db.php';
 $json = file_get_contents('php://input');
 $params = json_decode($json);
     
-$stmt = $db->prepare('SELECT * FROM [appointment] WHERE NOT ((appointment_end <= :start) OR (appointment_start >= :end))');
-$stmt->bindParam(':start', $params->start);
-$stmt->bindParam(':end', $params->end);
-$stmt->execute();
-$result = $stmt->fetchAll();
+if(defined('DB_SQLITE'))
+{
+	$stmt = $db->prepare('SELECT * FROM [appointment] WHERE NOT ((appointment_end <= :start) OR (appointment_start >= :end))');
+	$stmt->bindParam(':start', $params->start);
+	$stmt->bindParam(':end', $params->end);
+	$stmt->execute();
+	$result = $stmt->fetchAll();
+
+}else{
+	$data = Array($params->start, $params->end);
+  $result = $dbMysql->rawQuery("SELECT * FROM appointment WHERE NOT ((appointment_end <= ?) OR (appointment_start >= ?))",$data);
+}
+
+
 
 class Event {}
 class Tags {}

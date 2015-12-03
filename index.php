@@ -55,9 +55,11 @@
                 
                 $scope.calendarConfig = {
                     viewType: "Week",
+                    scale: "Manual",
                     timeRangeSelectedHandling: "Disabled",
                     eventMoveHandling: "Disabled",
                     eventResizeHandling: "Disabled",
+                    // timeHeaders : [ { groupBy: "Month" }, { groupBy: "Day", format: "dddd d" }],
                     onBeforeEventRender: function(args) {
                         switch (args.data.tags.status) {
                             case "free":
@@ -115,6 +117,9 @@
                         $scope.events = data;
                     });   
                 }
+
+
+
                 
             });
 

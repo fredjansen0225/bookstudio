@@ -42,23 +42,31 @@
                     <div class="space">
                         <select id="doctor" name="doctor" ng-model="doctor">
                         <?php 
-                            foreach($db->query('SELECT * FROM [doctor] ORDER BY [doctor_name]') as $item) {
-                                echo "<option value='".$item["doctor_id"]."'>".$item["doctor_name"]."</option>";
+                            if(defined('DB_SQLITE'))
+                            {
+                                foreach($db->query('SELECT * FROM [doctor] ORDER BY [doctor_name]') as $item) {
+                                    echo "<option value='".$item["doctor_id"]."'>".$item["doctor_name"]."</option>";
+                                }
+                            }else
+                            {
+                                $dbMysql->orderBy('doctor_name','asc');
+                                foreach($dbMysql->get('doctor') as $item) {
+                                    echo "<option value='".$item["doctor_id"]."'>".$item["doctor_name"]."</option>";
+                                }
                             }
                         ?>
                         </select>
                     </div>
-
                     <daypilot-calendar id="calendar" daypilot-config="calendarConfig" daypilot-events="events" ></daypilot-calendar>
                 </div>
-                
             </div>
 
             <script>
                 var app = angular.module('main', ['daypilot']).controller('DemoCtrl', function($scope, $timeout, $http) {
                     
-                $scope.doctor = '<?php echo $db->query('SELECT * FROM [doctor] ORDER BY [doctor_name]')->fetch()['doctor_id']; ?>';
-                    
+                $scope.doctor = '<?php echo defined(DB_SQLITE) ? $db->query('SELECT * FROM [doctor] ORDER BY [doctor_name]')->fetch()['doctor_id'] : $dbMysql->rawQuery('SELECT * FROM doctor ORDER BY doctor_name')['doctor_id']; ?>';
+                $scope.doctor = '2';
+
                 $scope.navigatorConfig = {
                     selectMode: "week",
                     showMonths: 3,

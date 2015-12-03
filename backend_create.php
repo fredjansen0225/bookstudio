@@ -39,16 +39,20 @@ foreach($timeline as $cell) {
 }
 
 function create_shift($start, $end, $doctor) {
-    global $db;
-    $stmt = $db->prepare("INSERT INTO appointment (appointment_start, appointment_end, doctor_id) VALUES (:start, :end, :doctor)");
-    $stmt->bindParam(':start', $start);
-    $stmt->bindParam(':end', $end);
-    $stmt->bindParam(':doctor', $doctor);
-    $stmt->execute();    
+    global $db,$dbMysql;
 
-
-    // $dbMysql->insert('appointment', Array("start" => $start, "end" => $end, "doctor_id" => $doctor));
-    
+    if(defined('DB_SQLITE'))
+    {
+        $stmt = $db->prepare("INSERT INTO appointment (appointment_start, appointment_end, doctor_id) VALUES (:start, :end, :doctor)");
+        $stmt->bindParam(':start', $start);
+        $stmt->bindParam(':end', $end);
+        $stmt->bindParam(':doctor', $doctor);
+        $stmt->execute();    
+    }
+    else{
+        $data = Array("appointment_start" => $start, "appointment_end" => $end, "doctor_id" => $doctor);
+        $dbMysql->insert('appointment', $data);    
+    }
 }
 
 class TimeCell {}
