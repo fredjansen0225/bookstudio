@@ -5,7 +5,7 @@
         <title>Request an Appointment</title>
     	<link type="text/css" rel="stylesheet" href="media/layout.css" />    
         <script src="js/jquery-1.11.2.min.js" type="text/javascript"></script>
-        <script src="js/daypilot/daypilot-all.min.js" type="text/javascript"></script>
+        <script src="js/daypilot/daypilot-all.min1.js" type="text/javascript"></script>
     </head>
     <body>
         <?php
@@ -22,8 +22,8 @@
                 $event = $stmt->fetch();
             }else
             {
-                $db->where('appointment_id', $_GET['id']);
-                $event = $db->get('appointment');
+                $dbMysql->where('appointment_id', $_GET['id']);
+                $event = $dbMysql->getOne('appointment');
             }
 
         ?>

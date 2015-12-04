@@ -17,6 +17,9 @@ $end_day->setTime(0, 0, 0);
 
 $days = $end_day->diff($start_day)->days;
 
+$name = $params->name;
+$status = $params->status;
+
 if ($end > $end_day) {
     $days += 1;
 }
@@ -25,33 +28,41 @@ $scale = $params->scale;
 
 $timeline = load_timeline();
 
-$slot_duration = 60;
+$slot_duration = 120;
 $doctor_id = $params->resource;
 
-foreach($timeline as $cell) {
-    if ($start <= $cell->start && $cell->end <= $end) {
-        for($shift_start = clone $cell->start; $shift_start < $cell->end; $shift_start->add(new DateInterval("PT".$slot_duration."M"))) {
-            $shift_end = clone $shift_start;
-            $shift_end->add(new DateInterval("PT".$slot_duration."M"));
-            create_shift($shift_start->format("Y-m-d\\TH:i:s"), $shift_end->format("Y-m-d\\TH:i:s"), $doctor_id);
-        }
-    }
-}
+create_shift($start->format("Y-m-d\\TH:i:s"), $end->format("Y-m-d\\TH:i:s"), $doctor_id, $name, $status);
 
-function create_shift($start, $end, $doctor) {
+//foreach($timeline as $cell) {
+//    if ($start <= $cell->start && $cell->end <= $end) {
+//        for($shift_start = clone $cell->start; $shift_start < $cell->end; $shift_start->add(new DateInterval("PT".$slot_duration."M"))) {
+//            $shift_end = clone $shift_start;
+//            $shift_end->add(new DateInterval("PT".$slot_duration."M"));
+//            create_shift($shift_start->format("Y-m-d\\TH:i:s"), $shift_end->format("Y-m-d\\TH:i:s"), $doctor_id);
+//        }
+//    }
+//}
+
+function create_shift($start, $end, $doctor, $name = '', $status = 'waiting') {
     global $db,$dbMysql;
 
     if(defined('DB_SQLITE'))
     {
-        $stmt = $db->prepare("INSERT INTO appointment (appointment_start, appointment_end, doctor_id) VALUES (:start, :end, :doctor)");
+        $stmt = $db->prepare("INSERT INTO appointment (appointment_start, appointment_end, doctor_id, appointment_name, appointment_status) VALUES (:start, :end, :doctor, :name, :status)");
         $stmt->bindParam(':start', $start);
         $stmt->bindParam(':end', $end);
         $stmt->bindParam(':doctor', $doctor);
+        $stmt->bindParam(':name', $name);
+        $stmt->bindParam(':status', $status);
         $stmt->execute();    
     }
     else{
-        $data = Array("appointment_start" => $start, "appointment_end" => $end, "doctor_id" => $doctor);
-        $dbMysql->insert('appointment', $data);    
+        $data = Array("appointment_start" => $start,
+                        "appointment_end" => $end,
+                        "doctor_id" => $doctor,
+                        "appointment_patient_name" => $name,
+                        "appointment_status" => $status);
+        $dbMysql->insert('appointment', $data);
     }
 }
 

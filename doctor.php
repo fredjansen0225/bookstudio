@@ -24,7 +24,7 @@
     <body>
         <script src="js/jquery-1.11.2.min.js"></script>
         <script src="js/angular.min.js"></script>
-        <script src="js/daypilot/daypilot-all.min.js"></script>
+        <script src="js/daypilot/daypilot-all.min1.js"></script>
         
         <?php require_once '_header.php'; ?>
                 
@@ -32,7 +32,7 @@
             
             <?php require_once '_navigation.php'; ?>
                 
-            <div ng-app="main" ng-controller="DemoCtrl" >
+            <div ng-app="main" ng-controller="BookingCtrl" >
 
                 <div style="float:left; width:160px">
                     <daypilot-navigator id="navigator" daypilot-config="navigatorConfig" daypilot-events="events"></daypilot-navigator>
@@ -62,10 +62,10 @@
             </div>
 
             <script>
-                var app = angular.module('main', ['daypilot']).controller('DemoCtrl', function($scope, $timeout, $http) {
+                var app = angular.module('main', ['daypilot']).controller('BookingCtrl', function($scope, $timeout, $http) {
                     
                 $scope.doctor = '<?php echo defined(DB_SQLITE) ? $db->query('SELECT * FROM [doctor] ORDER BY [doctor_name]')->fetch()['doctor_id'] : $dbMysql->rawQuery('SELECT * FROM doctor ORDER BY doctor_name')['doctor_id']; ?>';
-                $scope.doctor = '2';
+                $scope.doctor = '1';
 
                 $scope.navigatorConfig = {
                     selectMode: "week",
@@ -78,7 +78,7 @@
                 
                 $scope.calendarConfig = {
                     viewType: "Week",
-                    timeRangeSelectedHandling: "Disabled",
+                    // timeRangeSelectedHandling: "Disabled",
                     onEventMoved: function(args) {
                         $http.post("backend_move.php", args).success(function(data) {
                             $scope.calendar.message(data.message);
@@ -92,10 +92,10 @@
                     onBeforeEventRender: function(args) {
                         switch (args.data.tags.status) {
                             case "free":
-                                args.data.barColor = "green";
+                                args.data.barColor = "orange";
                                 break;
                             case "waiting":
-                                args.data.barColor = "orange";
+                                args.data.barColor = "green";
                                 break;
                             case "confirmed":
                                 args.data.barColor = "#f41616";  // red            
@@ -111,7 +111,29 @@
                             }
                         });
 
-                        modal.showUrl("appointment_edit.php?id=" + args.e.id());
+                        modal.showUrl("appointment_edit.php?editable=true&id=" + args.e.id());
+                    },
+                    onTimeRangeSelected: function(args) {
+                        var dp = $scope.calendar;
+                        
+                        var params = {
+                            start: args.start.toString(),
+                            end: args.end.toString(),
+                            resource: $scope.doctor,
+                            scale: 'hours'
+                        };
+
+                        var modal = new DayPilot.Modal({
+                            onClosed: function(args) {
+                                if (args.result) {  // args.result is empty when modal is closed without submitting
+                                    dp.clearSelection();
+                                    loadEvents();
+                                }
+                            }
+                        });
+
+                        modal.showUrl("appointment_create.php?start=" + params.start + "&end=" + params.end + "&resource=" + params.resource + "&scale=hours");
+
                     }
                 };
                 
