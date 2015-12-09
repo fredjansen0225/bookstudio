@@ -39,9 +39,7 @@
 
             <h1>{{readOnly ? 'Booking Information' : 'Edit Booking Information' }}</h1>
             
-            <div class="space">
-                <button id="delete" ng-click="delete()" ng-if="!readOnly">Delete</button>
-            </div>
+
 
             <div>Start:</div>
             <div><input type="text" id="start" name="start" disabled ng-model="appointment.start" /></div>
@@ -59,20 +57,20 @@
 //                        {
 //                            foreach($db->query('SELECT * FROM [doctor] ORDER BY [doctor_name]') as $item) {
 //                                $selected = "";
-//                                if ($event["doctor_id"] == $item["doctor_id"]) {
+//                                if ($event["client_id"] == $item["client_id"]) {
 //                                    $selected = " selected";
 //                                }
-//                                echo "<option value='".$item["doctor_id"]."'".$selected.">".$item["doctor_name"]."</option>";
+//                                echo "<option value='".$item["client_id"]."'".$selected.">".$item["doctor_name"]."</option>";
 //                            }
 //                        }
 //                        else{
 //                            $dbMysql->orderBy('doctor_name','asc');
 //                            foreach($dbMysql->get('doctor') as $item) {
 //                                $selected = "";
-//                                if ($event["doctor_id"] == $item["doctor_id"]) {
+//                                if ($event["client_id"] == $item["client_id"]) {
 //                                    $selected = " selected";
 //                                }
-//                                echo "<option value='".$item["doctor_id"]."'".$selected.">".$item["doctor_name"]."</option>";
+//                                echo "<option value='".$item["client_id"]."'".$selected.">".$item["doctor_name"]."</option>";
 //                            }
 //                        }
 //                    ?>
@@ -93,9 +91,9 @@
 
             <div>Name: </div>
             <div><input type="text" id="name" name="name" ng-model="appointment.name" ng-disabled="readOnly" /></div>
-            
-            <div class="space"><input type="submit" value="Save" ng-click="save()" ng-if="!readOnly"/> <a href="" id="cancel" ng-click="cancel()"> {{readOnly ? 'Close' : 'Cancel'}}</a></div>
-            
+
+            <div class="space"><button id="delete" ng-click="delete()" ng-if="!readOnly" style="margin: 10px;">Delete</button> <input type="submit" value="Save" ng-click="save()" ng-if="!readOnly" style="margin: 10px;"/> <a href="" id="cancel" ng-click="cancel()"> {{readOnly ? 'Close' : 'Cancel'}}</a></div>
+
         </div>
         
         <script type="text/javascript">
@@ -106,7 +104,7 @@
             $scope.appointment = {
                 id: '<?php echo $event['appointment_id'] ?>',
                 name: '<?php echo $event['appointment_patient_name'] ?>',
-//                doctor: '<?php //echo $event['doctor_id'] ?>//',
+//                doctor: '<?php //echo $event['client_id'] ?>//',
                 doctor: '1',
                 status: '<?php echo $event['appointment_status'] ?>',
                 start: '<?php print (new DateTime($event['appointment_start']))->format('d/M/y g:i A') ?>',

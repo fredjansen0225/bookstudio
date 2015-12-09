@@ -1,7 +1,5 @@
             <div class="space">
-                <a href="index.php">Public</a>
+                <a href="index.php">View</a>
                 |
-                <a href="doctor.php">Doctor</a>
-                |
-                <a href="manager.php">Manager</a>
+                <a href="edit.php">Edit</a>
             </div>

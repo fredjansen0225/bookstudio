@@ -3,20 +3,21 @@ require_once '_db.php';
 
 if(defined('DB_SQLITE'))
 {    
-	$scheduler_doctors = $db->query('SELECT * FROM [doctor] ORDER BY [doctor_name]');
+	$scheduler_clients = $db->query('SELECT * FROM [client] ORDER BY [client_name]');
 }else{
 	$dbMysql->orderBy('doctor_name','asc');
-	$scheduler_doctors = $dbMysql->get('doctor');
+	$scheduler_clients = $dbMysql->get('client');
 }
 
-class Resource {}
+class Client {}
 
 $result = array();
 
-foreach($scheduler_doctors as $doctor) {
-  $r = new Resource();
-  $r->id = $doctor['doctor_id'];
-  $r->name = $doctor['doctor_name'];
+foreach($scheduler_clients as $client) {
+  $r = new Client();
+  $r->id = $client['client_id'];
+  $r->name = $client['client_name'];
+  $r->email = $client['client_name'];
   $result[] = $r;
 }
 

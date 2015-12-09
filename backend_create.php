@@ -29,29 +29,19 @@ $scale = $params->scale;
 $timeline = load_timeline();
 
 $slot_duration = 120;
-$doctor_id = $params->resource;
+$client_id = $params->client_id;
 
-create_shift($start->format("Y-m-d\\TH:i:s"), $end->format("Y-m-d\\TH:i:s"), $doctor_id, $name, $status);
+create_shift($start->format("Y-m-d\\TH:i:s"), $end->format("Y-m-d\\TH:i:s"), $client_id, $name, $status);
 
-//foreach($timeline as $cell) {
-//    if ($start <= $cell->start && $cell->end <= $end) {
-//        for($shift_start = clone $cell->start; $shift_start < $cell->end; $shift_start->add(new DateInterval("PT".$slot_duration."M"))) {
-//            $shift_end = clone $shift_start;
-//            $shift_end->add(new DateInterval("PT".$slot_duration."M"));
-//            create_shift($shift_start->format("Y-m-d\\TH:i:s"), $shift_end->format("Y-m-d\\TH:i:s"), $doctor_id);
-//        }
-//    }
-//}
-
-function create_shift($start, $end, $doctor, $name = '', $status = 'waiting') {
+function create_shift($start, $end, $client, $name = '', $status = 'waiting') {
     global $db,$dbMysql;
 
     if(defined('DB_SQLITE'))
     {
-        $stmt = $db->prepare("INSERT INTO appointment (appointment_start, appointment_end, doctor_id, appointment_name, appointment_status) VALUES (:start, :end, :doctor, :name, :status)");
+        $stmt = $db->prepare("INSERT INTO appointment (appointment_start, appointment_end, client_id, appointment_name, appointment_status) VALUES (:start, :end, :doctor, :name, :status)");
         $stmt->bindParam(':start', $start);
         $stmt->bindParam(':end', $end);
-        $stmt->bindParam(':doctor', $doctor);
+        $stmt->bindParam(':doctor', $client);
         $stmt->bindParam(':name', $name);
         $stmt->bindParam(':status', $status);
         $stmt->execute();    
@@ -59,7 +49,7 @@ function create_shift($start, $end, $doctor, $name = '', $status = 'waiting') {
     else{
         $data = Array("appointment_start" => $start,
                         "appointment_end" => $end,
-                        "doctor_id" => $doctor,
+                        "client_id" => intval($client),
                         "appointment_patient_name" => $name,
                         "appointment_status" => $status);
         $dbMysql->insert('appointment', $data);

@@ -16,7 +16,7 @@
 
             $start = $_GET['start'];
             $end = $_GET['end'];
-            $resource = $_GET['resource'];
+            $client_id = $_GET['client_id'];
             $scale = $_GET['scale'];
 //            require_once '_db.php';
         ?>
@@ -50,7 +50,7 @@
             $scope.appointment = {
                 start : '<?php echo $start ?>',
                 end : '<?php echo $end; ?>',
-                resource : '<?php echo $resource; ?>',
+                client_id : '<?php echo $client_id; ?>',
                 scale : '<?php echo $scale; ?>',
                 status : 'waiting',
                 name : ''

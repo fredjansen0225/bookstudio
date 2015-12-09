@@ -14,6 +14,16 @@ $dbSource = DB_SQLITE;
 $db = null;
 $dbMysql = null;
 
+
+//local config
+$root_url = "http://localhost/3rdStreetAdrBooking";
+
+//prod config
+//$root_url = "http://54.67.78.76";
+
+
+
+
 if(defined('DB_SQLITE'))
 {
     $db_exists = file_exists("daypilot.sqlite");
@@ -25,7 +35,7 @@ if(defined('DB_SQLITE'))
     if (!$db_exists) {
         //create the database
         $db->exec("CREATE TABLE doctor (
-        doctor_id   INTEGER       PRIMARY KEY AUTOINCREMENT NOT NULL,
+        client_id   INTEGER       PRIMARY KEY AUTOINCREMENT NOT NULL,
         doctor_name VARCHAR (100) NOT NULL
         );");
         
@@ -36,7 +46,7 @@ if(defined('DB_SQLITE'))
         appointment_patient_name    VARCHAR (100),
         appointment_status          VARCHAR (100) DEFAULT ('free') NOT NULL,
         appointment_patient_session VARCHAR (100),
-        doctor_id                   INTEGER       NOT NULL
+        client_id                   INTEGER       NOT NULL
         );");
 
         $items = array(
@@ -59,17 +69,36 @@ if(defined('DB_SQLITE'))
 else
 {
 
-    $dbMysql = new MysqliDb (Array (
-                    'host' => 'localhost',
-                    'username' => 'root', 
-                    'password' => 'mysql',
-                    'db'=> '3rdStreetAdr',
-                    'port' => 3306,
-                    'prefix' => '',
-                    'charset' => 'utf8'));
+//    $localconf = Array (
+//        'host' => 'localhost',
+//        'username' => 'root',
+//        'password' => 'mysql',
+//        'db'=> '3rdStreetAdr',
+//        'port' => 3306,
+//        'prefix' => '',
+//        'charset' => 'utf8');
 
-    $doctor_tb_creation = "CREATE TABLE `3rdStreetAdr`.`doctor` ( `doctor_id` INT NOT NULL AUTO_INCREMENT , `doctor_name` VARCHAR(100) NOT NULL , PRIMARY KEY (`doctor_id`)) ENGINE = InnoDB;";
-    $appointment_tb_creation = "CREATE TABLE `3rdStreetAdr`.`appointment` ( `appointment_id` INT NOT NULL AUTO_INCREMENT , `appointment_start` DATETIME NOT NULL , `appointment_end` DATETIME NOT NULL , `appointment_patient_name` VARCHAR(100) NOT NULL , `appointment_status` VARCHAR(100) NOT NULL DEFAULT 'free' , `appointment_patient_session` VARCHAR(100) NOT NULL , `doctor_id` INT NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;";
+    $prodconf = Array (
+        'host' => 'db3rdstreetadr.cfnvfnqmhj5u.us-west-1.rds.amazonaws.com',
+        'username' => 'a3rdstreetadr',
+        'password' => 'dbv0nd3lp1rk',
+        'db'=> 'a3rdstreetadr',
+        'port' => 3306,
+        'prefix' => '',
+        'charset' => 'utf8');
+
+    //test app for local
+    $fbAppId = "391449467692451";
+    $fbAppSecret = "8ac4f17de057d5732bf7fba8a52d090a";
+
+    //product app for production
+
+    //$fbAppId = "390114841159247";
+    //$fbAppSecret = "2159765601f2aabe0f50d70698eda26f";
+
+
+    $dbMysql = new MysqliDb ($prodconf);
+//    $dbMysql = new MysqliDb ($localconf);
 }
 
 

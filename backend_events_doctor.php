@@ -7,15 +7,15 @@ $params = json_decode($json);
 
 if(defined('DB_SQLITE'))
 {
-	$stmt = $db->prepare('SELECT * FROM [appointment] WHERE NOT ((appointment_end <= :start) OR (appointment_start >= :end)) AND doctor_id = :doctor');
+	$stmt = $db->prepare('SELECT * FROM [appointment] WHERE NOT ((appointment_end <= :start) OR (appointment_start >= :end)) AND client_id = :doctor');
 	$stmt->bindParam(':start', $params->start);
 	$stmt->bindParam(':end', $params->end);
 	$stmt->bindParam(':doctor', $params->doctor);
 	$stmt->execute();
 	$result = $stmt->fetchAll();
 }else{
-	$data = Array($params->start, $params->end, $params->doctor);
-	$result = $dbMysql->rawQuery('SELECT * FROM appointment WHERE NOT ((appointment_end <= ?) OR (appointment_start >= ?)) AND doctor_id = ?', $data);
+	$data = Array($params->start, $params->end);
+	$result = $dbMysql->rawQuery('SELECT * FROM appointment WHERE NOT ((appointment_end <= ?) OR (appointment_start >= ?))', $data);
 }
 
 class Event {}
@@ -28,7 +28,7 @@ foreach($result as $row) {
   $e->text = $row['appointment_patient_name'];
   $e->start = $row['appointment_start'];
   $e->end = $row['appointment_end'];
-  $e->resource = $row['doctor_id'];
+  $e->resource = $row['client_id'];
   $e->tags = new Tags();
   $e->tags->status = $row['appointment_status'];
   $events[] = $e;

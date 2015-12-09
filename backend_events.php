@@ -14,7 +14,7 @@ if(defined('DB_SQLITE'))
 
 }else{
 	$data = Array($params->start, $params->end);
-  $result = $dbMysql->rawQuery("SELECT * FROM appointment WHERE NOT ((appointment_end <= ?) OR (appointment_start >= ?))",$data);
+    $result = $dbMysql->rawQuery("SELECT * FROM appointment WHERE NOT ((appointment_end <= ?) OR (appointment_start >= ?))",$data);
 }
 
 
@@ -29,7 +29,7 @@ foreach($result as $row) {
   $e->text = $row['appointment_patient_name'] ?: "";
   $e->start = $row['appointment_start'];
   $e->end = $row['appointment_end'];
-  $e->resource = $row['doctor_id'];
+  $e->resource = $row['client_id'];
   $e->tags = new Tags();
   $e->tags->status = $row['appointment_status'];
   $events[] = $e;
