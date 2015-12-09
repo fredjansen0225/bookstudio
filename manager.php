@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>AngularJS Doctor Appointment Scheduling Tutorial</title>
+        <title>3rdStreetAdr Mixing</title>
         
         <!-- demo stylesheet -->
     	<link type="text/css" rel="stylesheet" href="media/layout.css" />    

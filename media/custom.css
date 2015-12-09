@@ -10,3 +10,9 @@
 .scheduler_default_matrix_vertical_break {
     background-color: #eee !important;
 }
+
+
+.calendar_default_cell_inner {
+
+    /*border-bottom-color: black !important;*/
+}

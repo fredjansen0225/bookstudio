@@ -1,12 +1,15 @@
 <?php
-require_once '_db.php';
-require_once __DIR__ . '/Facebook/autoload.php';
+
+session_start();
+session_unset();
+session_destroy();
+
 ?>
     <!DOCTYPE html>
     <html>
     <head>
         <meta charset="UTF-8" />
-        <title>3rdStreetAdr Mixing</title>
+        <title>AngularJS Doctor Appointment Scheduling Tutorial</title>
 
         <!-- demo stylesheet -->
         <link type="text/css" rel="stylesheet" href="media/layout.css" />
@@ -60,34 +63,25 @@ require_once __DIR__ . '/Facebook/autoload.php';
                 xfbml      : true,  // parse social plugins on this page
                 version    : 'v2.2' // use version 2.2
             });
-        };
-
-        logInWithFacebook = function() {
 
             FB.getLoginStatus(function(response) {
-                if (response.status === 'connected') {
-                    // Logged into your app and Facebook.
-                    window.location = "js-login.php";
-                } else {
-                    // The person is not logged into Facebook, so we're not sure if
-                    // they are logged into this app or not.
-                    FB.login(function(response) {
-                        if (response.authResponse) {
-                            window.location = "js-login.php";
-                        } else {
-                            alert('User cancelled login or did not fully authorize.');
-                        }
-                    });
+                if (!response.session) {
+                    window.location = "login.php";
+                    return;
                 }
+                logOut();
             });
-            return false;
+
         };
 
         logOut = function() {
             FB.logout(function(response) {
                 // user is now logged out
+
                 console.log('logged out');
                 console.log(response);
+
+                window.location = "login.php";
             });
         };
 
@@ -102,27 +96,7 @@ require_once __DIR__ . '/Facebook/autoload.php';
 
         // Here we run a very simple test of the Graph API after login is
         // successful.  See statusChangeCallback() for when this call is made.
-        function testAPI() {
-            console.log('Welcome!  Fetching your information.... ');
-
-            FB.api('/me', function(response) {
-                console.log('Successful login for: ' + response.name);
-                document.getElementById('status').innerHTML =
-                    'Thanks for logging in, ' + response.name + '!';
-            });
-        }
     </script>
-
-
-    <?php require_once '_header.php'; ?>
-
-    <div class="main">
-
-        <p><a href="#" onClick="logInWithFacebook()">Log In with the JavaScript SDK</a></p>
-
-    </div>
-    <div class="clear">
-    </div>
 </body>
 </html>
 

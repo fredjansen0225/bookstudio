@@ -1,12 +1,15 @@
 <?php
 require_once '_db.php';
 
+if(!isset($_SESSION['fb_access_token']))
+    header('Location: login.php');
+
 ?>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8" />
-    <title>AngularJS Doctor Appointment Scheduling Tutorial</title>
+    <title>3rdStreetAdr Mixing</title>
 
     <!-- demo stylesheet -->
     <link type="text/css" rel="stylesheet" href="media/layout.css" />
@@ -39,34 +42,13 @@ require_once '_db.php';
             <daypilot-navigator id="navigator" daypilot-config="navigatorConfig" daypilot-events="events"></daypilot-navigator>
         </div>
         <div style="margin-left: 160px">
-
-            <div class="space">
-                <select id="doctor" name="doctor" ng-model="doctor">
-                    <?php
-                    if(defined('DB_SQLITE'))
-                    {
-                        foreach($db->query('SELECT * FROM [doctor] ORDER BY [doctor_name]') as $item) {
-                            echo "<option value='".$item["doctor_id"]."'>".$item["doctor_name"]."</option>";
-                        }
-                    }else
-                    {
-                        $dbMysql->orderBy('doctor_name','asc');
-                        foreach($dbMysql->get('doctor') as $item) {
-                            echo "<option value='".$item["doctor_id"]."'>".$item["doctor_name"]."</option>";
-                        }
-                    }
-                    ?>
-                </select>
-            </div>
             <daypilot-calendar id="calendar" daypilot-config="calendarConfig" daypilot-events="events" ></daypilot-calendar>
         </div>
     </div>
 
     <script>
         var app = angular.module('main', ['daypilot']).controller('BookingCtrl', function($scope, $timeout, $http) {
-
-            $scope.doctor = '<?php echo defined(DB_SQLITE) ? $db->query('SELECT * FROM [doctor] ORDER BY [doctor_name]')->fetch()['doctor_id'] : $dbMysql->rawQuery('SELECT * FROM doctor ORDER BY doctor_name')['doctor_id']; ?>';
-            $scope.doctor = '1';
+            $scope.client = '<?php echo $_SESSION['client_id']; ?>';
 
             $scope.navigatorConfig = {
                 selectMode: "week",
@@ -88,10 +70,10 @@ require_once '_db.php';
                             args.data.barColor = "orange";
                             break;
                         case "waiting":
-                            args.data.barColor = "green";
+                            args.data.barColor = "#f41616";
                             break;
                         case "confirmed":
-                            args.data.barColor = "#f41616";  // red
+                            args.data.barColor = "green";  // red
                             break;
                     }
                 },
@@ -108,19 +90,19 @@ require_once '_db.php';
                 },
             };
 
-            $scope.$watch("doctor", function() {
+            $scope.$watch("client", function() {
                 loadEvents();
             });
 
             function loadEvents(day) {
 
                 var params = {
-                    doctor: $scope.doctor,
+//                    doctor: $scope.client,
                     start: $scope.navigator.visibleStart(),
                     end: $scope.navigator.visibleEnd().toString()
                 };
 
-                $http.post("backend_events_doctor.php", params).success(function(data) {
+                $http.post("backend_events.php", params).success(function(data) {
                     if (day) {
                         $scope.calendarConfig.startDate = day;
                     }
