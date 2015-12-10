@@ -1,8 +1,12 @@
 <?php
 
+require_once '_db.php';
+
 session_start();
 session_unset();
 session_destroy();
+
+global $fbAppId;
 
 ?>
     <!DOCTYPE html>

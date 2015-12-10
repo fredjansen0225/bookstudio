@@ -88,6 +88,7 @@ require_once __DIR__ . '/Facebook/autoload.php';
                 // user is now logged out
                 console.log('logged out');
                 console.log(response);
+                window.location = "login.php";
             });
         };
 

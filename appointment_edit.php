@@ -46,45 +46,13 @@
 
             <div>End:</div>
             <div><input type="text" id="end" name="end" disabled  ng-model="appointment.end" /></div>
-
-<!--            <div class="space">-->
-<!--                <div>Doctor:</div>-->
-<!--                <div>-->
-<!--                    <select id="resource" name="resource" disabled ng-model="appointment.doctor">-->
-<!--                    --><?php //
-//
-//                        if(defined('DB_SQLITE'))
-//                        {
-//                            foreach($db->query('SELECT * FROM [doctor] ORDER BY [doctor_name]') as $item) {
-//                                $selected = "";
-//                                if ($event["client_id"] == $item["client_id"]) {
-//                                    $selected = " selected";
-//                                }
-//                                echo "<option value='".$item["client_id"]."'".$selected.">".$item["doctor_name"]."</option>";
-//                            }
-//                        }
-//                        else{
-//                            $dbMysql->orderBy('doctor_name','asc');
-//                            foreach($dbMysql->get('doctor') as $item) {
-//                                $selected = "";
-//                                if ($event["client_id"] == $item["client_id"]) {
-//                                    $selected = " selected";
-//                                }
-//                                echo "<option value='".$item["client_id"]."'".$selected.">".$item["doctor_name"]."</option>";
-//                            }
-//                        }
-//                    ?>
-<!--                    </select>-->
-<!--                </div>-->
-<!--            </div>-->
-
             <div class="space">
                 <div>Status:</div>
                 <div>
                     <select id="status" name="status" ng-model="appointment.status" ng-disabled="readOnly">
-<!--                        <option value="free">Free</option>-->
-                        <option value="waiting">Waiting</option>
+                        <option value="hold">Hold</option>
                         <option value="confirmed">Confirmed</option>
+                        <option value="finished">Finished</option>
                     </select>
                 </div>
             </div>

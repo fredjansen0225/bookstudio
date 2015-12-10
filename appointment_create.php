@@ -52,7 +52,7 @@
                 end : '<?php echo $end; ?>',
                 client_id : '<?php echo $client_id; ?>',
                 scale : '<?php echo $scale; ?>',
-                status : 'waiting',
+                status : 'hold',
                 name : ''
             }
 

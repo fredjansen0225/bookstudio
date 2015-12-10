@@ -46,7 +46,7 @@
             <script>
                 var app = angular.module('main', ['daypilot']).controller('BookingCtrl', function($scope, $timeout, $http) {
 
-                    $scope.client = '<?php echo $_SESSION['client_id']; ?>';
+                    $scope.client = '<?php echo $_SESSION['id']; ?>';
                     console.log("client_id:" + $scope.client);
 
                     $scope.navigatorConfig = {
@@ -67,31 +67,42 @@
                     dayEndsHour: 21,
                     businessBeginsHour : 8,
                     businessEndsHour: 20,
-                    headerDateFormat : 'dddd M/d',
+                    headerDateFormat : 'ddd M/d',
                     headerHeight : 42,
                     loadingLabelText : 'Loading...',
 
                     onTimeRangeSelected: function(args) {
+
                         var dp = $scope.calendar;
 
-                        var params = {
-                            start: args.start.addMinutes(-30).toString(),             // 30 mins buffer time
-                            end: args.end.toString(),
-                            resource: $scope.client,
-                            scale: 'hours'
-                        };
+                        var msg = validateAction(args,'add');
+                        if(msg)
+                        {
+                            $scope.calendar.message(msg);
+                            dp.clearSelection();
+                        }
+                        else
+                        {
 
-                        var modal = new DayPilot.Modal({
-                            onClosed: function(args) {
-                                if (args.result) {  // args.result is empty when modal is closed without submitting
+                            var params = {
+                                start: args.start.addMinutes(-30).toString(),             // 30 mins buffer time
+                                end: args.end.toString(),
+                                resource: $scope.client,
+                                scale: 'hours'
+                            };
 
-                                    loadEvents();
+                            var modal = new DayPilot.Modal({
+                                onClosed: function(args) {
+                                    if (args.result) {  // args.result is empty when modal is closed without submitting
+
+                                        loadEvents();
+                                    }
+                                    dp.clearSelection();
                                 }
-                                dp.clearSelection();
-                            }
-                        });
+                            });
 
-                        modal.showUrl("appointment_create.php?start=" + params.start + "&end=" + params.end + "&client_id=" + params.resource + "&scale=hours");
+                            modal.showUrl("appointment_create.php?start=" + params.start + "&end=" + params.end + "&client_id=" + params.resource + "&scale=hours");
+                        }
                     },
 
                     onEventMove: function(args){
@@ -129,17 +140,32 @@
                     },
 
                     onBeforeEventRender: function(args) {
-                        switch (args.data.tags.status) {
-                            case "free":
-                                args.data.barColor = "orange";
-                                break;
-                            case "waiting":
-                                args.data.barColor = "#f41616";
-                                break;
-                            case "confirmed":
-                                args.data.barColor = "green";  // red
-                                break;
-                        }
+                        //console.log(args);
+
+                        var profilePhoto = args.data.photo ? "<img class='profile_photo' src='" + args.data.photo + "' /> <br/>" : "",
+                            text = "<b>" + args.data.text + "</b> <br/>",
+                            time = args.data.start.toString().substring(11,16) + " ~ " + args.data.end.toString().substring(11,16);
+
+                        args.e.html = profilePhoto + text + time;
+
+                        if(args.data.end < new DayPilot.Date())
+                            args.data.barColor = "red"; // red
+
+//                        if(args.e.resource != $scope.client)
+//                            args.data.backColor = "lightgrey";
+//
+//                        switch (args.data.tags.status) {
+//                            case "finished":
+//                                args.data.barColor = "red"; // red
+//                                break;
+//                            case "hold":
+//                                args.data.barColor = "orange";
+//                                break;
+//                            case "confirmed":
+//                                args.data.barColor = "green";
+//                                break;
+//                        }
+
                     },
 
                     onEventClick: function(args) {
@@ -147,7 +173,6 @@
                         var writable = "true";
                         if(msg)
                         {
-
                             if(msg == 'readonly')
                                 writable = "false";
                             else
@@ -198,6 +223,16 @@
 
                     switch (action)
                     {
+
+                        case 'add':
+                            //TODO: check user role whether it's admin or not
+                            if(false)
+                                break;
+
+                            if(args.start < now)
+                                msg = "You can't book in times passed already.";
+
+                            break;
                         case 'move':
                             //TODO: check user role whether it's admin or not
                             if(false)
@@ -209,7 +244,7 @@
                                 msg = "You can book only in bussiness hours";
                             if(args.e.data.start < now)
                                 msg = "Can't edit past booking";
-                            if (args.e.data.resource != $scope.client)
+                            if (args.e.data.readOnly)
                                 msg = "You can't edit other's booking";
 
                             break;
@@ -218,7 +253,7 @@
                             if(false)
                                 break;
 
-                            if (args.e.data.resource != $scope.client)
+                            if (args.e.readOnly)
                                 msg = "You can't edit other's booking";
                             if (args.newEnd.getHours() > $scope.calendar.businessEndsHour)
                                 msg = "You can book only in bussiness hours";
@@ -230,7 +265,7 @@
                                 break;
                             if(args.e.data.start < now)
                                 msg = "readonly";
-                            if (args.e.data.resource != $scope.client)
+                            if (args.e.data.readOnly)
                                 msg = "You can't edit other's booking";
 
                             break;

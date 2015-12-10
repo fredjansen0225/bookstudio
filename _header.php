@@ -1,9 +1,9 @@
         <div id="header">
             <div class="bg-help">
 
-                <?php if(isset($_SESSION['client_id'])) { ?>
+                <?php if(isset($_SESSION['id'])) { ?>
                     <div style="color: white; float: right; margin: 20px 20px 0px 10px;">
-                       <span style="color: #8fc300;"><?php echo $_SESSION['client_name']; ?> </span> <a href="logout.php" style="color: white">Log Out</a>
+                       <span style="color: #8fc300;"><?php echo $_SESSION['name']; ?> </span> <a href="logout.php" style="color: white">Log Out</a>
                     </div>
                 <?php } ?>
 

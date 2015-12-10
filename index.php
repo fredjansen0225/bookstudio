@@ -48,7 +48,7 @@ if(!isset($_SESSION['fb_access_token']))
 
     <script>
         var app = angular.module('main', ['daypilot']).controller('BookingCtrl', function($scope, $timeout, $http) {
-            $scope.client = '<?php echo $_SESSION['client_id']; ?>';
+            $scope.client = '<?php echo $_SESSION['id']; ?>';
 
             $scope.navigatorConfig = {
                 selectMode: "week",
@@ -66,14 +66,14 @@ if(!isset($_SESSION['fb_access_token']))
                 eventResizeHandling: "Disabled",
                 onBeforeEventRender: function(args) {
                     switch (args.data.tags.status) {
-                        case "free":
-                            args.data.barColor = "orange";
+                        case "finished":
+                            args.data.barColor = "#f41616"; // red
                             break;
-                        case "waiting":
-                            args.data.barColor = "#f41616";
+                        case "hold":
+                            args.data.barColor = "#orange";
                             break;
                         case "confirmed":
-                            args.data.barColor = "green";  // red
+                            args.data.barColor = "green";
                             break;
                     }
                 },

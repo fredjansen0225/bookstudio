@@ -29,9 +29,40 @@ foreach($result as $row) {
   $e->text = $row['appointment_patient_name'] ?: "";
   $e->start = $row['appointment_start'];
   $e->end = $row['appointment_end'];
+
   $e->resource = $row['client_id'];
   $e->tags = new Tags();
   $e->tags->status = $row['appointment_status'];
+
+  // custom datas
+//  $e->html = substr($e->start,11,5) . " ~ " . substr($e->end,11,5);
+  if($e->resource != $_SESSION['id']) {
+    $e->backColor = 'lightgrey';
+    $e->readOnly = true;
+
+  }else
+  {
+    $e->readOnly = false;
+    $e->photo = $_SESSION['photo'];
+  }
+
+  switch($e->tags->status)
+  {
+
+    case "confirmed":
+      $e->barColor = "green";
+      break;
+    case "finished":
+      $e->barColor = "red";
+      break;
+    case "hold":
+      $e->barColor = "orange";
+      break;
+    default:
+      $e->barColor = "orange";
+      break;
+  }
+
   $events[] = $e;
 }
 

@@ -15,4 +15,19 @@
 .calendar_default_cell_inner {
 
     /*border-bottom-color: black !important;*/
+    border-right-color: black !important;
+}
+
+.navigator_default_busy {
+    font-weight: bold;
+}
+
+.profile_photo
+{
+    width:30px;
+    height:30px;
+    -webkit-border-radius:;
+    -moz-border-radius:;
+    border-radius:15px;
+
 }

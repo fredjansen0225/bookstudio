@@ -49,27 +49,44 @@ $fb_id = $user['id'];
 $fb_name = $user['name'];
 $fb_email = $user['email'];
 
-$data = Array (
-    "client_name" => $fb_name,
-    "client_email" => $fb_email,
-    "client_social_token" => $fb_token,
-    "client_social_type" => "fb",
-    "client_details" => "details",
-);
+$dbMysql->where('admin_email',$fb_email);
+$admin = $dbMysql->getOne('admin');
 
-$updateColumns = Array ("client_social_token");
-$lastInsertId = "client_id";
-$dbMysql->onDuplicate($updateColumns, $lastInsertId);
-$id = $dbMysql->insert ('client', $data);
-
-if($id)
-    echo 'user was created. Id=' . $id;
+if($admin)
+{
+    $_SESSION['admin'] = true;
+    $_SESSION['id'] = $id;
+    $_SESSION['photo'] = "http://graph.facebook.com/{$fb_id}/picture?type=square";
+    $_SESSION['name'] = $fb_name;
+    $_SESSION['email'] = $fb_email;
+}
 else
-    header('Location: login.php');
+{
 
-$_SESSION['client_id'] = $id;
-$_SESSION['client_name'] = $fb_name;
-$_SESSION['client_email'] = $fb_email;
+    $data = Array (
+        "client_name" => $fb_name,
+        "client_email" => $fb_email,
+        "client_social_token" => $fb_token,
+        "client_social_type" => "fb",
+        "client_details" => "details",
+    );
+
+    $updateColumns = Array ("client_social_token");
+    $lastInsertId = "client_id";
+    $dbMysql->onDuplicate($updateColumns, $lastInsertId);
+    $id = $dbMysql->insert ('client', $data);
+
+    if($id)
+        echo 'user was created. Id=' . $id;
+    else
+        header('Location: login.php');
+
+    $_SESSION['id'] = $id;
+    $_SESSION['name'] = $fb_name;
+    $_SESSION['email'] = $fb_email;
+    $_SESSION['photo'] = "http://graph.facebook.com/{$fb_id}/picture?type=square";
+
+}
 
 // User is logged in!
 // You can redirect them to a members-only page.
